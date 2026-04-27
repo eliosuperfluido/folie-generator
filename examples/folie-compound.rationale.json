@@ -1,0 +1,14 @@
+{
+  "folie_name": "folie-compound",
+  "brief": "Three ascent modes branching from L1; the roof opens at its centre around the helical's emergence.",
+  "program": "belvedere",
+  "intent": "The ramp brings the walker to a central L1 bridge (act 1). From there the walk branches. East: a cantilevered straight stair to a small L2 belvedere pad on the cube's east side (act 2a, lateral view). Centre: a two-revolution helical stair rising 7.2 m through the cube's interior and emerging through a central hole in the L3 roof deck (act 2b, panoramic). The cube is legible at every act; every placement respects the 3×3×3 sub-grid; the solid-cell pattern opens as you climb — 4 corners at ground, 2 diagonals at the middle tier, 1 at the top. The hole in the roof is the folie's visible secret — from outside, the cube reads as closed; on arrival above it reveals a shaft of sky at its centre.",
+  "operations_used": ["addition", "insertion", "subtraction"],
+  "principles_cited": ["P4", "P5", "P7"],
+  "relation_to_predecessors": "folie-belvedere-spiral used one ascent mode. folie-compound uses three — ramp, straight stair, helical — branching from L1 rather than stacking. The L3 light well is a subtraction move at the roof that reframes the helical's emergence: instead of pushing through a ceiling, the walker rises into a framed aperture of sky. First folie in the set where P7 is the primary driver; first with a reciprocal solid-to-void move (cube closed below, cube open above).",
+  "review": {
+    "renders_seen": ["axo-NE", "plan", "south elevation"],
+    "verdict": "pass",
+    "notes": "Validator clean (R1–R4 accessibility, §9 support, §10 non-overlap). Helical emerges through a roof cutout at B2-IV with a 270° fall-protection rail that opens at the spiral's exit. Known grammar limit: the last ~8 steps of the cantilever stair retain residual <2 m headroom under L2 — decks are single-cell plates with no sub-cell cutouts; tracked under 'headroom check for stairs' in the improvements queue."
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "glb_path": "generated/folie-compound/out/folie-compound.glb",
+  "passed": true,
+  "summary": {
+    "total": 9,
+    "ok": 9,
+    "warn": 0,
+    "error": 0
+  },
+  "checks": [
+    {
+      "name": "folie[0]@[0, 0].solid_cells",
+      "status": "ok",
+      "message": "7 valid",
+      "details": {}
+    },
+    {
+      "name": "folie[0]@[0, 0].platform[0]",
+      "status": "ok",
+      "message": "L1 \u00d7 5 cell(s)",
+      "details": {}
+    },
+    {
+      "name": "folie[0]@[0, 0].platform[1]",
+      "status": "ok",
+      "message": "L2 \u00d7 2 cell(s)",
+      "details": {}
+    },
+    {
+      "name": "folie[0]@[0, 0].platform[2]",
+      "status": "ok",
+      "message": "L3 \u00d7 9 cell(s)",
+      "details": {}
+    },
+    {
+      "name": "folie[0]@[0, 0].attach[0]:ramp",
+      "status": "ok",
+      "message": "len=11.65m tilt=18\u00b0 \u2192 z=3.60m (L1)",
+      "details": {}
+    },
+    {
+      "name": "folie[0]@[0, 0].attach[1]:stair_cantilever",
+      "status": "ok",
+      "message": "12 steps \u2192 z=7.20m (L2)",
+      "details": {}
+    },
+    {
+      "name": "folie[0]@[0, 0].attach[2]:stair_helical",
+      "status": "ok",
+      "message": "helical rise 7.2m, r=1.2m, 40 steps, 2.0 revolutions \u2192 L3",
+      "details": {}
+    },
+    {
+      "name": "folie[0]@[0, 0].accessibility",
+      "status": "ok",
+      "message": "all platform levels [1, 2, 3] reached by an attachment",
+      "details": {}
+    },
+    {
+      "name": "export.yup",
+      "status": "ok",
+      "message": "Y-up confirmed (y-ext 12.0m)",
+      "details": {
+        "x": 10.919999655336142,
+        "y": 12.025524139404297,
+        "z": 22.268037796020508
+      }
+    }
+  ]
+}

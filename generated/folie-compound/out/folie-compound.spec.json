@@ -1,0 +1,216 @@
+{
+  "defaults": {
+    "lod": 300,
+    "color": "#FF0000",
+    "metallic": 0.0,
+    "roughness": 0.55
+  },
+  "folies": [
+    {
+      "grid_pos": [
+        0,
+        0
+      ],
+      "seed": 888,
+      "cube": {
+        "show_subdivision_frame": true,
+        "solid_cells": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            0
+          ],
+          [
+            2,
+            0,
+            0
+          ],
+          [
+            2,
+            2,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ],
+          [
+            2,
+            2,
+            1
+          ],
+          [
+            0,
+            2,
+            2
+          ]
+        ],
+        "platforms": [
+          {
+            "level": 1,
+            "cells": [
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                0,
+                2
+              ]
+            ],
+            "open_sides": [
+              [
+                1,
+                0,
+                "y-"
+              ],
+              [
+                0,
+                2,
+                "x+"
+              ],
+              [
+                1,
+                2,
+                "x-"
+              ]
+            ]
+          },
+          {
+            "level": 2,
+            "cells": [
+              [
+                2,
+                1
+              ],
+              [
+                2,
+                2
+              ]
+            ],
+            "open_sides": [
+              [
+                2,
+                2,
+                "x-"
+              ]
+            ]
+          },
+          {
+            "level": 3,
+            "cells": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                2,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                2
+              ]
+            ],
+            "cutout_cells": [
+              [
+                1,
+                1
+              ]
+            ]
+          }
+        ]
+      },
+      "attachments": [
+        {
+          "type": "ramp",
+          "anchor_m": [
+            5.4,
+            -11.08,
+            0
+          ],
+          "direction": [
+            0,
+            1,
+            0
+          ],
+          "width_m": 2.0,
+          "tilt_deg": 18,
+          "target_z_m": 3.6,
+          "length_m": 11.65
+        },
+        {
+          "type": "stair_cantilever",
+          "anchor_m": [
+            3.6,
+            9.2,
+            3.6
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "width_m": 1.2,
+          "target_z_m": 7.2,
+          "steps": 12
+        },
+        {
+          "type": "stair_helical",
+          "anchor_m": [
+            5.4,
+            5.4,
+            3.6
+          ],
+          "top_z_m": 10.8,
+          "radius_m": 1.2,
+          "revolutions": 2.0,
+          "clockwise": true,
+          "landing": true
+        }
+      ]
+    }
+  ]
+}

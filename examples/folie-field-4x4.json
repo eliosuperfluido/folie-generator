@@ -1,0 +1,253 @@
+{
+  "name": "folie-field-4x4",
+  "defaults": { "lod": 300, "color": "#FF0000", "metallic": 0.0, "roughness": 0.55 },
+  "folies": [
+
+    { "grid_pos": [0, 0],
+      "cube": {
+        "show_subdivision_frame": true,
+        "solid_cells": [[0,0,0], [0,0,1]],
+        "platforms": [
+          { "level": 1, "cells": [[1,1],[1,2],[2,1],[2,2]] },
+          { "level": 2, "cells": [[2,2]] }
+        ]
+      },
+      "attachments": [
+        { "type": "ramp", "anchor_m": [5.4, -11.08, 0], "direction": [0, 1, 0],
+          "width_m": 1.8, "tilt_deg": 18, "target_z_m": 3.6 },
+        { "type": "stair_cantilever", "anchor_m": [10.0, 7.2, 3.6], "direction": [0, 1, 0],
+          "width_m": 1.2, "target_z_m": 7.2 },
+        { "type": "cylinder_tower", "anchor_m": [10.8, 10.8, 10.8],
+          "radius_m": 1.2, "height_m": 8 }
+      ]
+    },
+
+    { "grid_pos": [1, 0],
+      "cube": {
+        "show_subdivision_frame": true,
+        "solid_cells": [],
+        "platforms": [
+          { "level": 1, "cells": [[0,0],[1,0],[2,0]] },
+          { "level": 2, "cells": [[0,2],[1,2],[2,2]] }
+        ]
+      },
+      "attachments": [
+        { "type": "ramp", "anchor_m": [5.4, -11.08, 0], "direction": [0, 1, 0],
+          "width_m": 2.0, "tilt_deg": 18, "target_z_m": 3.6 },
+        { "type": "ramp", "anchor_m": [5.4, 26.2, 0], "direction": [0, -1, 0],
+          "width_m": 2.0, "tilt_deg": 25, "target_z_m": 7.2 }
+      ]
+    },
+
+    { "grid_pos": [2, 0],
+      "cube": {
+        "show_subdivision_frame": true,
+        "solid_cells": [[0,0,0], [2,2,0]]
+      },
+      "attachments": [
+        { "type": "wedge", "anchor_m": [5.4, 10.8, 3.6], "direction": [0, 1, 0],
+          "length_m": 6, "width_m": 4, "height_m": 4 },
+        { "type": "cantilever_beam", "anchor_m": [0, 5.4, 10.8], "direction": [-1, 0, 0],
+          "length_m": 5 }
+      ]
+    },
+
+    { "grid_pos": [3, 0],
+      "cube": {
+        "show_subdivision_frame": true,
+        "solid_cells": [[2,1,0], [2,1,1]]
+      },
+      "attachments": [
+        { "type": "curved_plane", "anchor_m": [0, 5.4, 5.4], "direction": [-1, 0, 0],
+          "radius_m": 4, "height_m": 7.2, "sweep_deg": 120 },
+        { "type": "cantilever_beam", "anchor_m": [10.8, 5.4, 7.2], "direction": [1, 0, 0],
+          "length_m": 4 }
+      ]
+    },
+
+    { "grid_pos": [0, 1],
+      "cube": {
+        "show_subdivision_frame": true,
+        "solid_cells": [[0,0,1],[0,1,1],[0,2,1],[0,0,2],[0,1,2],[0,2,2]],
+        "platforms": [
+          { "level": 1, "cells": [[0,0],[0,1],[0,2]] }
+        ]
+      },
+      "attachments": [
+        { "type": "ramp", "anchor_m": [5.4, -11.08, 0], "direction": [0, 1, 0],
+          "width_m": 1.8, "tilt_deg": 18, "target_z_m": 3.6 },
+        { "type": "cantilever_beam", "anchor_m": [3.6, 10.8, 10.8], "direction": [0, 1, 0],
+          "length_m": 4 }
+      ]
+    },
+
+    { "grid_pos": [1, 1],
+      "cube": {
+        "show_subdivision_frame": true,
+        "solid_cells": [[0,0,0],[0,1,0],[0,2,0],[2,0,0],[2,1,0],[2,2,0]],
+        "platforms": [
+          { "level": 2, "cells": [[0,1],[1,1],[2,1]] }
+        ]
+      },
+      "attachments": [
+        { "type": "ramp", "anchor_m": [26.2, 5.4, 0], "direction": [-1, 0, 0],
+          "width_m": 2.0, "tilt_deg": 25, "target_z_m": 7.2 },
+        { "type": "canopy", "anchor_m": [5.4, 10.8, 5.4], "direction": [0, 1, 0],
+          "width_m": 4, "depth_m": 3 }
+      ]
+    },
+
+    { "grid_pos": [2, 1],
+      "cube": {
+        "show_subdivision_frame": true,
+        "solid_cells": [[1,0,0],[1,1,0],[1,2,0]],
+        "dislocated_cells": [
+          { "cells": [[1,0,0],[1,1,0],[1,2,0]], "offset_m": [0, -1.5, 0] }
+        ],
+        "platforms": [
+          { "level": 2, "cells": [[0,1],[1,1],[2,1]] }
+        ]
+      },
+      "attachments": [
+        { "type": "ramp", "anchor_m": [26.2, 5.4, 0], "direction": [-1, 0, 0],
+          "width_m": 2.0, "tilt_deg": 25, "target_z_m": 7.2 }
+      ]
+    },
+
+    { "grid_pos": [3, 1],
+      "cube": {
+        "show_subdivision_frame": true,
+        "solid_cells": []
+      },
+      "attachments": [
+        { "type": "cylinder_tower", "anchor_m": [10.8, 10.8, 10.8],
+          "radius_m": 1.0, "height_m": 10 },
+        { "type": "cylinder_tower", "anchor_m": [0, 0, 0],
+          "radius_m": 0.9, "height_m": 4 },
+        { "type": "cantilever_beam", "anchor_m": [0, 5.4, 5.4], "direction": [-1, 0, 0],
+          "length_m": 5 }
+      ]
+    },
+
+    { "grid_pos": [0, 2],
+      "cube": {
+        "show_subdivision_frame": true,
+        "solid_cells": [[0,0,0], [2,2,0]],
+        "platforms": [
+          { "level": 3, "cells": [[0,0],[1,0],[2,0],[0,1],[1,1],[2,1],[0,2],[1,2],[2,2]] }
+        ]
+      },
+      "attachments": [
+        { "type": "stair_helical", "anchor_m": [5.4, 5.4, 0], "top_z_m": 10.8,
+          "radius_m": 1.5, "revolutions": 2.0 }
+      ]
+    },
+
+    { "grid_pos": [1, 2],
+      "cube": {
+        "show_subdivision_frame": true,
+        "solid_cells": [[0,1,0], [2,1,0]]
+      },
+      "attachments": [
+        { "type": "cylinder_drum", "anchor_m": [0, 5.4, 5.4], "direction": [1, 0, 0],
+          "radius_m": 1.8, "length_m": 7 },
+        { "type": "cantilever_beam", "anchor_m": [5.4, 0, 10.8], "direction": [0, -1, 0],
+          "length_m": 4 }
+      ]
+    },
+
+    { "grid_pos": [2, 2],
+      "cube": {
+        "show_subdivision_frame": true,
+        "solid_cells": [[0,0,0]],
+        "platforms": [
+          { "level": 2, "cells": [[1,1]] }
+        ]
+      },
+      "attachments": [
+        { "type": "cylinder_tower", "anchor_m": [0, 10.8, 10.8],
+          "radius_m": 1.2, "height_m": 6 },
+        { "type": "cylinder_tower", "anchor_m": [10.8, 0, 10.8],
+          "radius_m": 1.0, "height_m": 9 },
+        { "type": "ramp", "anchor_m": [5.4, -11.08, 0], "direction": [0, 1, 0],
+          "width_m": 1.8, "tilt_deg": 25, "target_z_m": 7.2 }
+      ]
+    },
+
+    { "grid_pos": [3, 2],
+      "cube": {
+        "show_subdivision_frame": true,
+        "solid_cells": [],
+        "platforms": [
+          { "level": 3, "cells": [[0,0],[1,0],[2,0],[0,1],[1,1],[2,1],[0,2],[1,2],[2,2]] }
+        ]
+      },
+      "attachments": [
+        { "type": "canopy", "anchor_m": [5.4, 0, 10.8], "direction": [0, -1, 0],
+          "width_m": 5, "depth_m": 3 },
+        { "type": "canopy", "anchor_m": [5.4, 10.8, 10.8], "direction": [0, 1, 0],
+          "width_m": 5, "depth_m": 3 },
+        { "type": "stair_helical", "anchor_m": [5.4, 5.4, 0], "top_z_m": 10.8,
+          "radius_m": 1.2, "revolutions": 1.5 }
+      ]
+    },
+
+    { "grid_pos": [0, 3],
+      "cube": {
+        "show_subdivision_frame": true,
+        "solid_cells": [],
+        "platforms": [
+          { "level": 1, "cells": [[0,0],[0,1],[0,2]] },
+          { "level": 2, "cells": [[2,0],[2,1],[2,2]] }
+        ]
+      },
+      "attachments": [
+        { "type": "ramp", "anchor_m": [-11.08, 5.4, 0], "direction": [1, 0, 0],
+          "width_m": 1.8, "tilt_deg": 18, "target_z_m": 3.6 },
+        { "type": "stair_cantilever", "anchor_m": [3.6, 5.4, 3.6], "direction": [1, 0, 0],
+          "width_m": 1.2, "target_z_m": 7.2 }
+      ]
+    },
+
+    { "grid_pos": [1, 3],
+      "cube": {
+        "show_subdivision_frame": true,
+        "solid_cells": [[1,1,0],[1,1,1],[1,1,2]]
+      },
+      "attachments": [
+        { "type": "cantilever_beam", "anchor_m": [0, 5.4, 5.4], "direction": [-1, 0, 0],
+          "length_m": 4 },
+        { "type": "cantilever_beam", "anchor_m": [10.8, 5.4, 5.4], "direction": [1, 0, 0],
+          "length_m": 4 }
+      ]
+    },
+
+    { "grid_pos": [2, 3],
+      "cube": {
+        "show_subdivision_frame": true,
+        "solid_cells": []
+      },
+      "attachments": [
+        { "type": "raw_beam", "from_m": [0, 0, 0], "to_m": [7.2, 7.2, 10.8],
+          "section_m": 0.15 },
+        { "type": "raw_beam", "from_m": [10.8, 0, 0], "to_m": [3.6, 7.2, 10.8],
+          "section_m": 0.15 },
+        { "type": "raw_beam", "from_m": [5.4, 5.4, 0], "to_m": [5.4, 5.4, 13.5],
+          "section_m": 0.12 }
+      ]
+    },
+
+    { "grid_pos": [3, 3],
+      "cube": {
+        "show_subdivision_frame": true,
+        "solid_cells": []
+      },
+      "attachments": [
+        { "type": "cylinder_tower", "anchor_m": [5.4, 5.4, 10.8],
+          "radius_m": 1.5, "height_m": 8 },
+        { "type": "canopy", "anchor_m": [0, 5.4, 3.6], "direction": [-1, 0, 0],
+          "width_m": 4, "depth_m": 2.5 }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Folie Viewer</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #1e1e1e; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; overflow: hidden; }
+  #info { position: absolute; top: 12px; left: 12px; color: #ddd; font-size: 13px; z-index: 10; user-select: none; }
+  #info h1 { margin: 0 0 4px 0; font-size: 14px; font-weight: 600; color: #fff; }
+  #info p { margin: 2px 0; color: #aaa; font-size: 11px; }
+  #controls { position: absolute; top: 12px; right: 12px; display: flex; gap: 8px; z-index: 10; }
+  #controls label, #controls button { background: rgba(40,40,40,0.9); color: #fff; border: 1px solid #555; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+  #controls button:hover, #controls label:hover { background: rgba(60,60,60,0.95); }
+  #controls button.active { background: rgba(220,40,40,0.9); border-color: #ff8080; }
+  #status { position: absolute; bottom: 12px; left: 12px; color: #888; font-size: 11px; z-index: 10; }
+  #file { display: none; }
+  canvas { display: block; }
+  /* Grid labels — DOM nodes injected by CSS2DRenderer */
+  .grid-label { color: #fff; font-size: 13px; font-weight: 600; text-shadow: 0 0 3px #000, 0 0 5px #000;
+                background: rgba(20,20,20,0.7); padding: 2px 6px; border-radius: 3px;
+                pointer-events: none; user-select: none; white-space: nowrap; }
+  .grid-label.x { color: #6ee0ff; }   /* columns A B C */
+  .grid-label.y { color: #ffd56b; }   /* rows 1 2 3 */
+  .grid-label.z { color: #ff8aff; }   /* layers I II III */
+  .grid-label.cell { color: #fff; opacity: 0.9; }
+</style>
+</head>
+<body>
+<div id="info">
+  <h1>Folie Viewer</h1>
+  <p>Drag .glb into window, or use Load</p>
+  <p>Drag: rotate · Scroll: zoom · Right-drag: pan</p>
+</div>
+<div id="controls">
+  <label>Load <input type="file" id="file" accept=".glb,.gltf"></label>
+  <button id="resetView">Reset view</button>
+  <button id="toggleGrid">Grid</button>
+  <button id="toggleEdgeLabels">Edge labels</button>
+  <button id="toggleCellLabels">Cell labels</button>
+</div>
+<div id="status">No model loaded</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+const status = document.getElementById('status');
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x2a2a2a);
+scene.fog = new THREE.Fog(0x2a2a2a, 150, 800);
+
+// Y-up (glTF 2.0 convention). Generator applies Z-up -> Y-up conversion on export.
+const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 5000);
+const defaultCamPos = new THREE.Vector3(28, 18, 28);
+const defaultTarget = new THREE.Vector3(5.4, 5.4, 5.4);
+camera.position.copy(defaultCamPos);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+// PBR essentials: sRGB output + filmic tone mapping. Without these, metallic/roughness
+// look flat and washed out.
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+document.body.appendChild(renderer.domElement);
+
+// CSS2DRenderer overlay for grid labels — DOM nodes positioned in 3D space.
+// Sits on top of the WebGL canvas, captures no pointer events.
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize(window.innerWidth, window.innerHeight);
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = '0';
+labelRenderer.domElement.style.left = '0';
+labelRenderer.domElement.style.pointerEvents = 'none';
+document.body.appendChild(labelRenderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.copy(defaultTarget);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+
+// IBL environment — offline, no HDRI download. Metals are nearly black without this
+// because they reflect the environment rather than diffuse light.
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+// Keyed sun for direction + shadows. Keep lower intensity because IBL carries the base.
+const sun = new THREE.DirectionalLight(0xffffff, 2.2);
+sun.position.set(40, 60, 30);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.near = 1;
+sun.shadow.camera.far = 300;
+sun.shadow.camera.left = -100;
+sun.shadow.camera.right = 100;
+sun.shadow.camera.top = 100;
+sun.shadow.camera.bottom = -100;
+sun.shadow.bias = -0.0005;
+scene.add(sun);
+
+// Y-up: ground is the XZ plane at y=0. PlaneGeometry defaults to XY, rotate to XZ.
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(2000, 2000),
+  new THREE.MeshStandardMaterial({ color: 0x3a3a3a, roughness: 0.9 })
+);
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+const grid = new THREE.GridHelper(500, 50, 0x666666, 0x3a3a3a);
+grid.position.y = 0.01;
+scene.add(grid);
+
+const fieldGrid = new THREE.GridHelper(2000, 17, 0x884444, 0x442222);
+fieldGrid.position.y = 0.02;
+fieldGrid.visible = false;
+scene.add(fieldGrid);
+
+document.getElementById('toggleGrid').addEventListener('click', () => {
+  grid.visible = !grid.visible;
+  fieldGrid.visible = !fieldGrid.visible && grid.visible === false ? false : !fieldGrid.visible;
+});
+
+// ---------------------------------------------------------------------------
+// Grid labels — Tschumi sub-cell naming. Cube is 10.8 m, divided into a 3×3×3
+// grid of 3.6 m cells. Axes:
+//   X (column) → letters  A B C   (cyan)
+//   Y (row)    → numbers  1 2 3   (yellow)  — note: Y in viewer = spec Z (height)
+//   Z (layer)  → romans   I II III (magenta) — note: Z in viewer = spec Y (depth/north)
+// In glTF Y-up, the spec's "row" (north–south) maps to viewer's Z, and the spec's
+// "layer" (height) maps to viewer's Y. The labels below preserve the user-facing
+// semantics: numbers go up the height, romans go along depth.
+const CUBE_SIZE = 10.8;
+const SUB = 3;
+const SUB_SIZE = CUBE_SIZE / SUB;
+const COL_LETTERS = ['A', 'B', 'C'];
+const ROW_NUMBERS = ['1', '2', '3'];
+const LAYER_ROMANS = ['I', 'II', 'III'];
+const LEVEL_ROMANS = ['I', 'II', 'III', 'IV']; // platform-level marks at z=0, sub, 2·sub, 3·sub
+
+function makeLabel(text, cls) {
+  const el = document.createElement('div');
+  el.className = 'grid-label' + (cls ? ' ' + cls : '');
+  el.textContent = text;
+  return new CSS2DObject(el);
+}
+
+const edgeLabels = new THREE.Group();
+const cellLabels = new THREE.Group();
+edgeLabels.visible = false;
+cellLabels.visible = false;
+scene.add(edgeLabels);
+scene.add(cellLabels);
+
+// Coordinate mapping: generator exports Z-up → glTF Y-up via rotate -90° about X.
+//   spec_x →  viewer_x
+//   spec_y → -viewer_z   (north-south flips sign)
+//   spec_z →  viewer_y   (height)
+// So the cube spans viewer_x ∈ [0, 10.8], viewer_y ∈ [0, 10.8], viewer_z ∈ [-10.8, 0].
+// All label positions below use the viewer frame.
+
+// Edge labels — placed just outside the south-east corner so all three axes
+// can be read together without occluding the cube.
+const off = 0.6;       // outward offset
+const baseY = -0.4;    // dropped below ground line
+for (let i = 0; i < SUB; i++) {
+  const mid = (i + 0.5) * SUB_SIZE;
+  // Columns A B C — along viewer +X, sitting south of the cube (viewer +Z, since
+  // south face of cube is at viewer_z = 0; space south is +Z).
+  const lx = makeLabel(COL_LETTERS[i], 'x');
+  lx.position.set(mid, baseY, off);
+  edgeLabels.add(lx);
+  // Rows 1 2 3 — along viewer −Z (north of cube is viewer_z = -10.8), placed at
+  // east edge so they don't collide with column labels.
+  const lz = makeLabel(ROW_NUMBERS[i], 'z');
+  lz.position.set(CUBE_SIZE + off, baseY, -mid);
+  edgeLabels.add(lz);
+}
+// Level marks I II III IV at the four floor heights z=0, 3.6, 7.2, 10.8.
+// Architectural slab convention: I=ground, II=floor of layer-II, III=floor of
+// layer-III, IV=roof. SW outside corner so they don't collide with cube faces.
+for (let i = 0; i < 4; i++) {
+  const ly = makeLabel(LEVEL_ROMANS[i], 'y');
+  ly.position.set(-off, i * SUB_SIZE, off);
+  edgeLabels.add(ly);
+}
+
+// Cell labels — 27 sub-cell centroids at layer centres I/II/III, plus 9 roof
+// cells at level IV (z = 3·sub = 10.8 m, the cube top). Map (col, row, layer)
+// into the viewer frame.
+for (let layer = 0; layer < SUB; layer++) {
+  for (let row = 0; row < SUB; row++) {
+    for (let col = 0; col < SUB; col++) {
+      const text = `${COL_LETTERS[col]}${ROW_NUMBERS[row]}-${LAYER_ROMANS[layer]}`;
+      const lbl = makeLabel(text, 'cell');
+      lbl.position.set(
+        (col + 0.5) * SUB_SIZE,            // x
+        (layer + 0.5) * SUB_SIZE,          // y (height)
+        -(row + 0.5) * SUB_SIZE,           // z (north-south, negated)
+      );
+      cellLabels.add(lbl);
+    }
+  }
+}
+// Roof-cell labels at level IV (z = CUBE_SIZE). 9 labels.
+for (let row = 0; row < SUB; row++) {
+  for (let col = 0; col < SUB; col++) {
+    const text = `${COL_LETTERS[col]}${ROW_NUMBERS[row]}-IV`;
+    const lbl = makeLabel(text, 'cell');
+    lbl.position.set(
+      (col + 0.5) * SUB_SIZE,
+      CUBE_SIZE + 0.2,                     // sit just above the roof slab
+      -(row + 0.5) * SUB_SIZE,
+    );
+    cellLabels.add(lbl);
+  }
+}
+
+// Helper: set group visibility AND propagate to all descendants. CSS2DRenderer
+// respects scene-graph visibility but only re-checks at render time, so make
+// it explicit on every child too — guards against stale state.
+function setGroupVisible(group, btn, visible) {
+  group.visible = visible;
+  group.traverse(o => { o.visible = visible; });
+  btn.classList.toggle('active', visible);
+}
+
+const edgeBtn = document.getElementById('toggleEdgeLabels');
+const cellBtn = document.getElementById('toggleCellLabels');
+
+// Default OFF.
+setGroupVisible(edgeLabels, edgeBtn, false);
+setGroupVisible(cellLabels, cellBtn, false);
+
+edgeBtn.addEventListener('click', () => {
+  setGroupVisible(edgeLabels, edgeBtn, !edgeLabels.visible);
+});
+cellBtn.addEventListener('click', () => {
+  setGroupVisible(cellLabels, cellBtn, !cellLabels.visible);
+});
+
+document.getElementById('resetView').addEventListener('click', () => {
+  camera.position.copy(defaultCamPos);
+  controls.target.copy(defaultTarget);
+});
+
+const loader = new GLTFLoader();
+let currentModel = null;
+
+function frameModel(obj) {
+  const box = new THREE.Box3().setFromObject(obj);
+  const size = new THREE.Vector3(); box.getSize(size);
+  const center = new THREE.Vector3(); box.getCenter(center);
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const dist = maxDim * 1.8;
+  camera.position.set(center.x + dist, center.y + dist * 0.7, center.z + dist);
+  controls.target.copy(center);
+  controls.update();
+  status.textContent = `Model: ${maxDim.toFixed(1)} m · ${obj.children.length} geometries`;
+}
+
+function ensureRedMaterial(obj) {
+  // The .glb ships a real PBR material (baseColorFactor, metallicFactor,
+  // roughnessFactor). GLTFLoader already maps those onto MeshStandardMaterial —
+  // do not overwrite. Just enable shadows.
+  obj.traverse((child) => {
+    if (child.isMesh) {
+      child.castShadow = true;
+      child.receiveShadow = true;
+    }
+  });
+}
+
+function clearModel() {
+  if (currentModel) {
+    scene.remove(currentModel);
+    currentModel.traverse((c) => {
+      if (c.geometry) c.geometry.dispose();
+      if (c.material) {
+        if (Array.isArray(c.material)) c.material.forEach(m => m.dispose());
+        else c.material.dispose();
+      }
+    });
+    currentModel = null;
+  }
+}
+
+function loadFromUrl(url) {
+  status.textContent = 'Loading…';
+  loader.load(url, (gltf) => {
+    clearModel();
+    currentModel = gltf.scene;
+    ensureRedMaterial(currentModel);
+    scene.add(currentModel);
+    frameModel(currentModel);
+  }, undefined, (err) => {
+    console.error(err);
+    status.textContent = 'Error loading ' + url;
+  });
+}
+
+function loadFromBuffer(buffer, name) {
+  status.textContent = 'Loading ' + name + '…';
+  loader.parse(buffer, '', (gltf) => {
+    clearModel();
+    currentModel = gltf.scene;
+    ensureRedMaterial(currentModel);
+    scene.add(currentModel);
+    frameModel(currentModel);
+  }, (err) => {
+    console.error(err);
+    status.textContent = 'Error parsing ' + name;
+  });
+}
+
+// Load from URL param ?src=...
+const params = new URLSearchParams(window.location.search);
+const src = params.get('src');
+if (src) loadFromUrl(src);
+
+// File input
+document.getElementById('file').addEventListener('change', async (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const buf = await f.arrayBuffer();
+  loadFromBuffer(buf, f.name);
+});
+
+// Drag-drop
+window.addEventListener('dragover', e => e.preventDefault());
+window.addEventListener('drop', async (e) => {
+  e.preventDefault();
+  const f = e.dataTransfer.files[0];
+  if (!f) return;
+  const buf = await f.arrayBuffer();
+  loadFromBuffer(buf, f.name);
+});
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  labelRenderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+  labelRenderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>
