@@ -8,7 +8,7 @@ triggers: ["folie", "folies", "Tschumi", "Villette", "Parc de la Villette"]
 
 [![CI](https://github.com/eliosuperfluido/folie-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/eliosuperfluido/folie-generator/actions/workflows/ci.yml)
 
-![folie-compound, axonometric NE](generated/folie-compound/out/renders/folie-compound_axo-ne.png)
+![folie-compound, axonometric NE](generated/folie-compound/out/renders/folie-compound_axo-se.png)
 
 Generate accurate 3D geometry of Bernard Tschumi's Parc de la Villette folies as `.glb` files. A formal grammar enforces the Villette rule system; an autofix layer patches common spec errors before geometry is built; a validator confirms accessibility, support, and non-overlap on every emission.
 
