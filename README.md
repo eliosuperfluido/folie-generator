@@ -6,7 +6,6 @@ triggers: ["folie", "folies", "Tschumi", "Villette", "Parc de la Villette"]
 
 # Tschumi Folie Generator
 
-[![CI](https://github.com/eliosuperfluido/folie-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/eliosuperfluido/folie-generator/actions/workflows/ci.yml)
 
 ![folie-compound, axonometric NE](generated/folie-compound/out/renders/folie-compound_axo-se.png)
 
